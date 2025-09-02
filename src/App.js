@@ -1,6 +1,5 @@
 // criação do elemento square que irá compor o tabuleiro
 import { useState } from 'react';
-
 import './App.css'
 
 function Square({valor, onSquareClick}){
@@ -9,19 +8,18 @@ function Square({valor, onSquareClick}){
   );
 }
 
-export default function Tabuleiro(){
-  const [squares, setSquares] = useState(Array(9).fill(null))
-  const [xIsNext, setXIsNext] = useState(true)
 
-  function handleClick(i){
 
+function Tabuleiro({xIsNext, squares, onPlay}){
+
+  function handleClick(i){ 
 
     if(squares[i] || haVencedor(squares))
     {
       // guarda na variável o valor do vencedor
-      const vencedor = haVencedor(squares)
+      const ganahdor = haVencedor(squares)
       // mostra o resultado na tela
-      document.getElementById('vencedor').innerHTML = "O vencedor é o " + vencedor
+      document.getElementById('ganhador').innerHTML = "O vencedor é o " + ganahdor
       // trava a jogada
       return ;
     }
@@ -35,11 +33,23 @@ export default function Tabuleiro(){
     {
       nextSquares[i] = "O"
     }
-    setSquares(nextSquares)
-    setXIsNext(!xIsNext)
+    
+    onPlay(nextSquares)
+  }
+
+  const vencedor = haVencedor(squares);
+  let status;
+  if(vencedor){
+    status = "Vencedor: " + vencedor
+  }
+  else{
+    status = "Próximo a jogar: " + (xIsNext ?"X" : "O")
   }
   return (
     <div>
+      <div className='status'>
+        {status}
+      </div>
       <div className='teste'>
         <Square valor={squares[0]} onSquareClick={()=> {handleClick(0)}}/>
         <Square valor={squares[1]} onSquareClick={()=> {handleClick(1)}}/>
@@ -59,11 +69,27 @@ export default function Tabuleiro(){
       </div>
 
       <div>
-        <p id='vencedor'></p>
+        <p id='ganhador'></p>
       </div>
     </div>
   )
 }
+
+
+//componente Game
+export default function Game(){
+  
+  const [history, setHistory] = useState([Array(9).fill(null)])
+  const [squares, setSquares] = useState(Array(9).fill(null))
+  const [currentMove, setCurrentMove] = useState(0)
+  const xIsNext = currentMove %  2 === 0;
+
+
+  
+}
+
+
+
 
 function haVencedor(squares){
   // cria um dicionário de jogadas que dão vitória à alguem
